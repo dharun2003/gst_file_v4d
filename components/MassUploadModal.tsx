@@ -51,7 +51,7 @@ const UploadDropzone: React.FC<{ onFilesSelected: (files: FileList) => void }> =
             <p className="text-slate-500 mt-1">Supports images (PNG, JPG) and PDF files.</p>
             <button 
                 onClick={() => inputRef.current?.click()}
-                className="mt-6 px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
+                className="mt-6 px-6 py-2 bg-blue-50 text-blue-700 font-semibold rounded-md hover:bg-blue-100 border border-blue-200"
             >
                 Or click to browse
             </button>
@@ -438,9 +438,9 @@ const MassUploadModal: React.FC<MassUploadModalProps> = ({ onClose, onComplete, 
                                  <button disabled className="px-4 py-2 text-sm font-medium text-white bg-blue-400 rounded-md flex items-center cursor-not-allowed"><Icon name="spinner" className="animate-spin w-4 h-4 mr-2"/>Processing...</button>
                             ) : (
                                 !hasPendingFiles ? (
-                                   <button onClick={handleSave} disabled={successCount === 0} className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md flex items-center hover:bg-green-700 disabled:bg-gray-400"><Icon name="check-circle" className="w-5 h-5 mr-2" /> Save {successCount} Vouchers</button>
+                                   <button onClick={handleSave} disabled={successCount === 0} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md flex items-center hover:bg-blue-700 disabled:bg-gray-400"><Icon name="check-circle" className="w-5 h-5 mr-2" /> Save {successCount} Vouchers</button>
                                 ) : (
-                                   <button onClick={startProcessing} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md flex items-center hover:bg-blue-700"><Icon name="wand-sparkles" className="w-5 h-5 mr-2" /> Start Processing</button>
+                                   <button onClick={startProcessing} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md flex items-center hover:bg-blue-700 border-transparent"><Icon name="wand-sparkles" className="w-5 h-5 mr-2" /> Start Processing</button>
                                 )
                             )}
                         </div>

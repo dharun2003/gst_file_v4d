@@ -1,6 +1,6 @@
 import React from 'react';
 
-type IconName = 'dashboard' | 'masters' | 'inventory' | 'vouchers' | 'reports' | 'plus' | 'trash' | 'upload' | 'close' | 'warning' | 'settings' | 'logout' | 'sparkles' | 'arrow-up-right' | 'arrow-down-left' | 'users' | 'wallet' | 'download' | 'check-circle' | 'x-circle' | 'spinner' | 'wand-sparkles';
+type IconName = 'dashboard' | 'masters' | 'inventory' | 'vouchers' | 'reports' | 'plus' | 'trash' | 'upload' | 'close' | 'warning' | 'settings' | 'logout' | 'sparkles' | 'arrow-up-right' | 'arrow-down-left' | 'users' | 'wallet' | 'download' | 'check-circle' | 'x-circle' | 'spinner' | 'wand-sparkles' | 'eye' | 'eye-slash';
 
 interface IconProps {
   name: IconName;
@@ -31,6 +31,8 @@ const ICONS: Record<IconName, React.ReactElement> = {
   'x-circle': <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />,
   'spinner': <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001a.75.75 0 01.487.879l-1.026 3.076a.75.75 0 01-.879.487l-3.076-1.026a.75.75 0 01-.487-.879zM19.023 9.348a8.966 8.966 0 00-4.663-4.663m-4.663 0a8.966 8.966 0 00-4.663 4.663m0 0a8.966 8.966 0 004.663 4.663m4.663 0a8.966 8.966 0 004.663-4.663" />,
   'wand-sparkles': <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-3.022 3.022c.133.57.465.998.924 1.332a3 3 0 004.142-1.332 3 3 0 00-1.332-4.142 3 3 0 00-1.71- .522zm-3.022 3.022a3 3 0 003.022-3.022m-3.022 3.022a3 3 0 01-3.022-3.022m3.022 3.022l-.522 1.71m3.022-3.022l1.71.522m0 0l1.71-.522m-1.71.522a3 3 0 01-3.022 3.022m3.022-3.022a3 3 0 013.022 3.022m0 0l.522-1.71m-3.022 3.022l-.522-1.71m-1.71.522l-1.71-.522m0 0l-1.71.522M6.47 10.97a3 3 0 010 4.242 3 3 0 01-4.242 0 3 3 0 010-4.242 3 3 0 014.242 0z" />,
+  eye: <><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.432 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></>,
+  'eye-slash': <><path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.243 4.243l-4.243-4.243" /></>,
 };
 
 const Icon: React.FC<IconProps> = ({ name, className = 'w-6 h-6' }) => {

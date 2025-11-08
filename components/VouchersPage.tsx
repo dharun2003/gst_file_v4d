@@ -578,7 +578,7 @@ const VouchersPage: React.FC<VouchersPageProps> = ({ ledgers, stockItems, onAddV
             <div className="relative" ref={importMenuRef}>
                 <button
                     onClick={() => setIsImportMenuOpen(prev => !prev)}
-                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="inline-flex items-center justify-center px-4 py-2 border border-blue-500 text-sm font-medium rounded-md shadow-sm text-blue-600 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                     <Icon name="upload" className="w-5 h-5 mr-2" />
                     Import Vouchers
