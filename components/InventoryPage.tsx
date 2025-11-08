@@ -177,20 +177,20 @@ const InventoryPage: React.FC<InventoryPageProps> = ({
                     <thead className="bg-gray-50 sticky top-0">
                         <tr>
                             <th className="table-header">Item Name</th>
-                            <th className="table-header">Group</th>
-                            <th className="table-header">HSN</th>
-                            <th className="table-header">GST Rate</th>
-                            <th className="table-header text-right">Quantity</th>
+                            <th className="table-header text-center">Group</th>
+                            <th className="table-header text-center">HSN</th>
+                            <th className="table-header text-center">GST Rate</th>
+                            <th className="table-header text-center">Quantity</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {stockItems.map(item => (
                             <tr key={item.name}>
                                 <td className="table-cell font-medium">{item.name}</td>
-                                <td className="table-cell text-gray-500">{item.group}</td>
-                                <td className="table-cell text-gray-500 font-mono">{item.hsn}</td>
-                                <td className="table-cell text-gray-500">{item.gstRate}%</td>
-                                <td className="table-cell text-gray-500 font-mono text-right">{item.quantity || 0}</td>
+                                <td className="table-cell text-gray-500 text-center">{item.group}</td>
+                                <td className="table-cell text-gray-500 font-mono text-center">{item.hsn}</td>
+                                <td className="table-cell text-gray-500 text-center">{item.gstRate}%</td>
+                                <td className="table-cell text-gray-500 font-mono text-center">{item.quantity || 0}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -241,7 +241,7 @@ const InventoryPage: React.FC<InventoryPageProps> = ({
         .form-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 1px #3b82f6; }
         .form-button { display: inline-flex; items-center: center; justify-content: center; padding: 0.5rem 1rem; border: 1px solid transparent; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); color: white; background-color: #2563eb; }
         .form-button:hover { background-color: #1d4ed8; }
-        .table-header { padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+        .table-header { padding: 0.75rem 1.5rem; font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
         .table-cell { padding: 1rem 1.5rem; white-space: nowrap; font-size: 0.875rem; color: #111827; }
       `}</style>
       

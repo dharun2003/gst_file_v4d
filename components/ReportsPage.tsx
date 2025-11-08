@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo, useCallback } from 'react';
 import type { Ledger, Voucher, StockItem, SalesPurchaseVoucher, LedgerGroupMaster } from '../types';
 
@@ -138,7 +139,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
   const gstr2ReportData = useMemo(() => {
     if (reportType !== 'GSTReports') return null;
     const purchaseVouchers = vouchers.filter(v => v.type === 'Purchase') as SalesPurchaseVoucher[];
-    const b2bPurchases = purchaseVouchers.filter(v => ledgersByName[v.party]?.registrationType === 'Registered' && ledgersByName[v.party]?.gstin);
+    const b2bPurchases = purchaseVouchers.filter(v => ledgersByName[v.party]?.registrationType === 'Registered' && ledgersByName[v.party].gstin);
     return { b2bPurchases };
   }, [reportType, vouchers, ledgersByName]);
 
@@ -425,9 +426,9 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
-                        <th className="table-header">Date</th>
+                        <th className="table-header text-center">Date</th>
                         <th className="table-header">Particulars</th>
-                        <th className="table-header">Vch Type</th>
+                        <th className="table-header text-center">Vch Type</th>
                         <th className="table-header text-right">Debit</th>
                         <th className="table-header text-right">Credit</th>
                     </tr>
@@ -435,9 +436,9 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                 <tbody className="bg-white divide-y divide-gray-200">
                     {transactions.map(t => (
                         <tr key={t.id}>
-                            <td className="table-cell text-gray-500">{new Date(t.date).toLocaleDateString()}</td>
+                            <td className="table-cell text-gray-500 text-center">{new Date(t.date).toLocaleDateString()}</td>
                             <td className="table-cell">{t.particulars}</td>
-                            <td className="table-cell text-gray-500">{t.voucherType}</td>
+                            <td className="table-cell text-gray-500 text-center">{t.voucherType}</td>
                             <td className="table-cell font-mono text-right">{t.debit > 0 ? t.debit.toFixed(2) : ''}</td>
                             <td className="table-cell font-mono text-right">{t.credit > 0 ? t.credit.toFixed(2) : ''}</td>
                         </tr>
@@ -450,9 +451,9 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
     return (
         <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50"><tr>
-                <th className="table-header">Date</th>
+                <th className="table-header text-center">Date</th>
                 <th className="table-header">Particulars</th>
-                <th className="table-header">Vch Type</th>
+                <th className="table-header text-center">Vch Type</th>
                 <th className="table-header text-right">Debit</th>
                 <th className="table-header text-right">Credit</th>
                 <th className="table-header text-right">Balance</th>
@@ -464,8 +465,8 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                 </tr>
                 {transactions.map(t => (
                     <tr key={t.id}>
-                        <td className="table-cell text-gray-500">{new Date(t.date).toLocaleDateString()}</td>
-                        <td className="table-cell">{t.particulars}</td><td className="table-cell text-gray-500">{t.voucherType}</td>
+                        <td className="table-cell text-gray-500 text-center">{new Date(t.date).toLocaleDateString()}</td>
+                        <td className="table-cell">{t.particulars}</td><td className="table-cell text-gray-500 text-center">{t.voucherType}</td>
                         <td className="table-cell font-mono text-right">{t.debit > 0 ? t.debit.toFixed(2) : ''}</td>
                         <td className="table-cell font-mono text-right">{t.credit > 0 ? t.credit.toFixed(2) : ''}</td>
                         <td className="table-cell font-mono text-right">{formatBalance(t.balance)}</td>
