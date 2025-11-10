@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import Icon from './Icon';
 
 interface LoginPageProps {
-  onLogin: () => void;
+  onLogin: (companyNameFromSignUp?: string) => void;
 }
 
 const PlanCard: React.FC<{ title: string; price: string; features: string[]; popular?: boolean }> = ({ title, price, features, popular }) => (
@@ -69,6 +69,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       e.preventDefault();
       setError('');
       setSuccess('');
+      if (!companyName.trim()) {
+        setError("Company Name is required.");
+        return;
+      }
       if (newPassword !== confirmPassword) {
           setError("Passwords do not match.");
           return;
@@ -77,14 +81,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           setError("Password must be at least 8 characters long.");
           return;
       }
-      // In a real app, you would register the user here.
-      // For this demo, we'll just show a success message and switch to sign in.
-      console.log('Signed up with:', { email, newUsername, companyName, logo: logo?.name });
-      setSuccess('Account created successfully! Please sign in.');
-      setIsSignUp(false);
-      // Pre-fill username for convenience
-      setUsername(newUsername);
-      setPassword('');
+      // "Sign up" and log in immediately with the new company name.
+      onLogin(companyName);
   };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {

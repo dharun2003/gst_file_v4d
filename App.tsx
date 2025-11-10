@@ -23,7 +23,13 @@ const App: React.FC = () => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   // In-memory database state
-  const [companyDetails, setCompanyDetails] = useState<CompanyDetails>({ name: 'AI-Accounting', address: '', gstin: '', state: ''});
+  const [companyDetails, setCompanyDetails] = useState<CompanyDetails>({ 
+    name: 'AI-Accounting', address: '', gstin: '', state: '', email: '', phone: '', website: '', pan: '', cin: '',
+    voucherNumbering: {
+      sales: { enabled: true, prefix: 'INV-', suffix: '/24-25', nextNumber: 1, padding: 4 },
+      purchase: { enabled: true, prefix: 'PO-', suffix: '/24-25', nextNumber: 1, padding: 4 }
+    }
+  });
   const [ledgers, setLedgers] = useState<Ledger[]>([]);
   const [ledgerGroups, setLedgerGroups] = useState<LedgerGroupMaster[]>([]);
   const [units, setUnits] = useState<Unit[]>([]);
@@ -67,8 +73,24 @@ const App: React.FC = () => {
         dbService.loadData<Voucher>('vouchers')
       ]);
 
+      const defaultVoucherNumbering = {
+        sales: { enabled: true, prefix: 'INV-', suffix: '/24-25', nextNumber: 1, padding: 4 },
+        purchase: { enabled: true, prefix: 'PO-', suffix: '/24-25', nextNumber: 1, padding: 4 }
+      };
+
       if (loadedLedgers.length === 0) { // First time load, seed the database
-        setCompanyDetails({ name: 'Accatum Machinors Pvt Ltd', address: '4/14, 4/15 V.K.V Nanjappa Gounder Layout', gstin: '33ABACA5718R1ZD', state: 'Tamil Nadu'});
+        setCompanyDetails({ 
+            name: 'Accatum Machinors Pvt Ltd', 
+            address: '4/14, 4/15 V.K.V Nanjappa Gounder Layout', 
+            gstin: '33ABACA5718R1ZD', 
+            state: 'Tamil Nadu',
+            email: 'contact@accatum.com',
+            phone: '9876543210',
+            website: 'https://www.accatum.com',
+            pan: 'ABACA5718R',
+            cin: 'U72900TN2021PTC144888',
+            voucherNumbering: defaultVoucherNumbering,
+        });
         setLedgers(initialLedgers);
         setLedgerGroups(initialLedgerGroups);
         setUnits(initialUnits);
@@ -76,7 +98,11 @@ const App: React.FC = () => {
         setStockItems(initialStockItems);
         setVouchers(initialVouchers);
       } else {
-        setCompanyDetails(loadedCompanyDetails[0] || { name: 'AI-Accounting', address: '', gstin: '', state: ''});
+        const loaded = loadedCompanyDetails[0];
+        if (loaded && !loaded.voucherNumbering) {
+            loaded.voucherNumbering = defaultVoucherNumbering;
+        }
+        setCompanyDetails(loaded || { name: 'AI-Accounting', address: '', gstin: '', state: '', email: '', phone: '', website: '', pan: '', cin: '', voucherNumbering: defaultVoucherNumbering });
         setLedgers(loadedLedgers);
         setLedgerGroups(loadedLedgerGroups);
         setUnits(loadedUnits);
@@ -102,7 +128,12 @@ const App: React.FC = () => {
   }, [companyDetails, ledgers, ledgerGroups, units, stockGroups, stockItems, vouchers, isDataLoaded]);
 
 
-  const handleLogin = () => setIsLoggedIn(true);
+  const handleLogin = (companyNameFromSignUp?: string) => {
+    if (companyNameFromSignUp) {
+      setCompanyDetails(prev => ({ ...prev, name: companyNameFromSignUp }));
+    }
+    setIsLoggedIn(true);
+  };
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentPage('Dashboard');

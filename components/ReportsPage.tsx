@@ -396,13 +396,20 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
 
   const renderDayBook = () => (
     <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50"><tr><th className="table-header">Date</th><th className="table-header">Voucher Type</th><th className="table-header">Party</th><th className="table-header text-right">Amount</th></tr></thead>
+      <thead className="bg-gray-50">
+        <tr>
+          <th className="table-header text-left">Date</th>
+          <th className="table-header text-left">Voucher Type</th>
+          <th className="table-header text-left">Party</th>
+          <th className="table-header text-right">Amount</th>
+        </tr>
+      </thead>
       <tbody className="bg-white divide-y divide-gray-200">
         {filteredVouchers.length > 0 ? filteredVouchers.map(v => (
           <tr key={v.id}>
-            <td className="table-cell text-gray-500">{new Date(v.date).toLocaleDateString()}</td>
-            <td className="table-cell font-medium">{v.type}</td>
-            <td className="table-cell text-gray-500">{getVoucherParty(v)}</td>
+            <td className="table-cell text-gray-500 text-left">{new Date(v.date).toLocaleDateString()}</td>
+            <td className="table-cell font-medium text-left">{v.type}</td>
+            <td className="table-cell text-gray-500 text-left">{getVoucherParty(v)}</td>
             <td className="table-cell font-mono text-right">{getVoucherAmount(v).toFixed(2)}</td>
           </tr>
         )) : (
@@ -426,9 +433,9 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
-                        <th className="table-header text-center">Date</th>
-                        <th className="table-header">Particulars</th>
-                        <th className="table-header text-center">Vch Type</th>
+                        <th className="table-header text-left">Date</th>
+                        <th className="table-header text-left">Particulars</th>
+                        <th className="table-header text-left">Vch Type</th>
                         <th className="table-header text-right">Debit</th>
                         <th className="table-header text-right">Credit</th>
                     </tr>
@@ -436,9 +443,9 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                 <tbody className="bg-white divide-y divide-gray-200">
                     {transactions.map(t => (
                         <tr key={t.id}>
-                            <td className="table-cell text-gray-500 text-center">{new Date(t.date).toLocaleDateString()}</td>
-                            <td className="table-cell">{t.particulars}</td>
-                            <td className="table-cell text-gray-500 text-center">{t.voucherType}</td>
+                            <td className="table-cell text-gray-500 text-left">{new Date(t.date).toLocaleDateString()}</td>
+                            <td className="table-cell text-left">{t.particulars}</td>
+                            <td className="table-cell text-gray-500 text-left">{t.voucherType}</td>
                             <td className="table-cell font-mono text-right">{t.debit > 0 ? t.debit.toFixed(2) : ''}</td>
                             <td className="table-cell font-mono text-right">{t.credit > 0 ? t.credit.toFixed(2) : ''}</td>
                         </tr>
@@ -451,22 +458,22 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
     return (
         <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50"><tr>
-                <th className="table-header text-center">Date</th>
-                <th className="table-header">Particulars</th>
-                <th className="table-header text-center">Vch Type</th>
+                <th className="table-header text-left">Date</th>
+                <th className="table-header text-left">Particulars</th>
+                <th className="table-header text-left">Vch Type</th>
                 <th className="table-header text-right">Debit</th>
                 <th className="table-header text-right">Credit</th>
                 <th className="table-header text-right">Balance</th>
             </tr></thead>
             <tbody className="bg-white divide-y divide-gray-200">
                 <tr className="font-semibold bg-slate-50">
-                    <td className="table-cell" colSpan={5}>Opening Balance</td>
+                    <td className="table-cell text-left" colSpan={5}>Opening Balance</td>
                     <td className="table-cell font-mono text-right">{formatBalance(openingBalance)}</td>
                 </tr>
                 {transactions.map(t => (
                     <tr key={t.id}>
-                        <td className="table-cell text-gray-500 text-center">{new Date(t.date).toLocaleDateString()}</td>
-                        <td className="table-cell">{t.particulars}</td><td className="table-cell text-gray-500 text-center">{t.voucherType}</td>
+                        <td className="table-cell text-gray-500 text-left">{new Date(t.date).toLocaleDateString()}</td>
+                        <td className="table-cell text-left">{t.particulars}</td><td className="table-cell text-gray-500 text-left">{t.voucherType}</td>
                         <td className="table-cell font-mono text-right">{t.debit > 0 ? t.debit.toFixed(2) : ''}</td>
                         <td className="table-cell font-mono text-right">{t.credit > 0 ? t.credit.toFixed(2) : ''}</td>
                         <td className="table-cell font-mono text-right">{formatBalance(t.balance)}</td>
@@ -474,7 +481,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                 ))}
             </tbody>
             <tfoot className="bg-gray-100 font-bold">
-                <tr><td className="table-cell" colSpan={5}>Closing Balance</td>
+                <tr><td className="table-cell text-left" colSpan={5}>Closing Balance</td>
                     <td className="table-cell font-mono text-right">{formatBalance(closingBalance)}</td>
                 </tr>
             </tfoot>
@@ -484,10 +491,10 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
 
   const renderTrialBalance = () => (
     <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50"><tr><th className="table-header">Ledger</th><th className="table-header text-right">Debit</th><th className="table-header text-right">Credit</th></tr></thead>
+      <thead className="bg-gray-50"><tr><th className="table-header text-left">Ledger</th><th className="table-header text-right">Debit</th><th className="table-header text-right">Credit</th></tr></thead>
       <tbody className="bg-white divide-y divide-gray-200">
         {trialBalanceData?.result.map(item => (
-          <tr key={item.ledger}><td className="table-cell font-medium">{item.ledger}</td><td className="table-cell font-mono text-right">{item.debit > 0 ? item.debit.toFixed(2) : ''}</td><td className="table-cell font-mono text-right">{item.credit > 0 ? item.credit.toFixed(2) : ''}</td></tr>
+          <tr key={item.ledger}><td className="table-cell font-medium text-left">{item.ledger}</td><td className="table-cell font-mono text-right">{item.debit > 0 ? item.debit.toFixed(2) : ''}</td><td className="table-cell font-mono text-right">{item.credit > 0 ? item.credit.toFixed(2) : ''}</td></tr>
         ))}
       </tbody>
       <tfoot className="bg-gray-100 font-bold">
@@ -500,7 +507,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
      <table className="min-w-full divide-y divide-gray-200">
       <thead className="bg-gray-50">
         <tr>
-          <th className="table-header">Item Name</th>
+          <th className="table-header text-left">Item Name</th>
           <th className="table-header text-right">Opening Stock</th>
           <th className="table-header text-right">Inward</th>
           <th className="table-header text-right">Outward</th>
@@ -510,7 +517,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
       <tbody className="bg-white divide-y divide-gray-200">
         {stockSummaryData?.map(item => (
           <tr key={item.name}>
-            <td className="table-cell font-medium">{item.name}</td>
+            <td className="table-cell font-medium text-left">{item.name}</td>
             <td className="table-cell font-mono text-right">{item.opening}</td>
             <td className="table-cell font-mono text-right">{item.inward}</td>
             <td className="table-cell font-mono text-right">{item.outward}</td>
@@ -527,10 +534,10 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
         <div className="mb-6">
             <h4 className="font-semibold text-gray-700 mb-2">B2B Invoices (Registered Dealers)</h4>
             <table className="min-w-full divide-y divide-gray-200"><thead className="bg-gray-50"><tr>
-                <th className="table-header">GSTIN</th><th className="table-header">Party Name</th><th className="table-header text-right">Taxable Value</th><th className="table-header text-right">Total Tax</th><th className="table-header text-right">Invoice Value</th>
+                <th className="table-header text-left">GSTIN</th><th className="table-header text-left">Party Name</th><th className="table-header text-right">Taxable Value</th><th className="table-header text-right">Total Tax</th><th className="table-header text-right">Invoice Value</th>
             </tr></thead><tbody className="bg-white divide-y divide-gray-200">
                 {gstr1ReportData?.b2b.map(v => (<tr key={v.id}>
-                    <td className="table-cell">{ledgersByName[v.party]?.gstin}</td><td className="table-cell font-medium">{v.party}</td>
+                    <td className="table-cell text-left">{ledgersByName[v.party]?.gstin}</td><td className="table-cell font-medium text-left">{v.party}</td>
                     <td className="table-cell text-right font-mono">{v.totalTaxableAmount.toFixed(2)}</td><td className="table-cell text-right font-mono">{(v.totalCgst + v.totalSgst + v.totalIgst).toFixed(2)}</td>
                     <td className="table-cell text-right font-mono">{v.total.toFixed(2)}</td>
                 </tr>))}
@@ -539,10 +546,10 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
          <div>
             <h4 className="font-semibold text-gray-700 mb-2">B2C Invoices (Unregistered Dealers)</h4>
             <table className="min-w-full divide-y divide-gray-200"><thead className="bg-gray-50"><tr>
-                <th className="table-header">Party Name</th><th className="table-header text-right">Taxable Value</th><th className="table-header text-right">Total Tax</th><th className="table-header text-right">Invoice Value</th>
+                <th className="table-header text-left">Party Name</th><th className="table-header text-right">Taxable Value</th><th className="table-header text-right">Total Tax</th><th className="table-header text-right">Invoice Value</th>
             </tr></thead><tbody className="bg-white divide-y divide-gray-200">
                  {gstr1ReportData?.b2c.map(v => (<tr key={v.id}>
-                    <td className="table-cell font-medium">{v.party}</td><td className="table-cell text-right font-mono">{v.totalTaxableAmount.toFixed(2)}</td>
+                    <td className="table-cell font-medium text-left">{v.party}</td><td className="table-cell text-right font-mono">{v.totalTaxableAmount.toFixed(2)}</td>
                     <td className="table-cell text-right font-mono">{(v.totalCgst + v.totalSgst + v.totalIgst).toFixed(2)}</td><td className="table-cell text-right font-mono">{v.total.toFixed(2)}</td>
                 </tr>))}
             </tbody></table>
@@ -560,8 +567,8 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                     <tr>
-                        <th className="table-header">GSTIN of Supplier</th>
-                        <th className="table-header">Party Name</th>
+                        <th className="table-header text-left">GSTIN of Supplier</th>
+                        <th className="table-header text-left">Party Name</th>
                         <th className="table-header text-right">Taxable Value</th>
                         <th className="table-header text-right">Total Tax</th>
                         <th className="table-header text-right">Invoice Value</th>
@@ -570,8 +577,8 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                 <tbody className="bg-white divide-y divide-gray-200">
                     {gstr2ReportData?.b2bPurchases.map(v => (
                         <tr key={v.id}>
-                            <td className="table-cell">{ledgersByName[v.party]?.gstin}</td>
-                            <td className="table-cell font-medium">{v.party}</td>
+                            <td className="table-cell text-left">{ledgersByName[v.party]?.gstin}</td>
+                            <td className="table-cell font-medium text-left">{v.party}</td>
                             <td className="table-cell text-right font-mono">{v.totalTaxableAmount.toFixed(2)}</td>
                             <td className="table-cell text-right font-mono">{(v.totalCgst + v.totalSgst + v.totalIgst).toFixed(2)}</td>
                             <td className="table-cell text-right font-mono">{v.total.toFixed(2)}</td>
@@ -596,7 +603,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                 <table className="min-w-full divide-y divide-gray-200 border">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="table-header">Nature of Supplies</th>
+                            <th className="table-header text-left">Nature of Supplies</th>
                             <th className="table-header text-right">Total Taxable Value</th>
                             <th className="table-header text-right">Integrated Tax (IGST)</th>
                             <th className="table-header text-right">Central Tax (CGST)</th>
@@ -605,7 +612,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         <tr>
-                            <td className="table-cell font-medium">(a) Outward taxable supplies (other than zero rated, nil rated and exempted)</td>
+                            <td className="table-cell font-medium text-left">(a) Outward taxable supplies (other than zero rated, nil rated and exempted)</td>
                             <td className="table-cell font-mono text-right">{outwardSupplies.taxableValue.toFixed(2)}</td>
                             <td className="table-cell font-mono text-right">{outwardSupplies.igst.toFixed(2)}</td>
                             <td className="table-cell font-mono text-right">{outwardSupplies.cgst.toFixed(2)}</td>
@@ -620,7 +627,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                  <table className="min-w-full divide-y divide-gray-200 border">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="table-header">Details</th>
+                            <th className="table-header text-left">Details</th>
                             <th className="table-header text-right">Integrated Tax (IGST)</th>
                             <th className="table-header text-right">Central Tax (CGST)</th>
                             <th className="table-header text-right">State/UT Tax (SGST)</th>
@@ -628,7 +635,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                     </thead>
                      <tbody className="bg-white divide-y divide-gray-200">
                         <tr>
-                            <td className="table-cell font-medium">(A) ITC Available (whether in full or part) > (5) All other ITC</td>
+                            <td className="table-cell font-medium text-left">(A) ITC Available (whether in full or part) > (5) All other ITC</td>
                             <td className="table-cell font-mono text-right">{inwardSupplies.itc.igst.toFixed(2)}</td>
                             <td className="table-cell font-mono text-right">{inwardSupplies.itc.cgst.toFixed(2)}</td>
                             <td className="table-cell font-mono text-right">{inwardSupplies.itc.sgst.toFixed(2)}</td>
@@ -642,7 +649,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                  <table className="min-w-full divide-y divide-gray-200 border">
                      <thead className="bg-gray-50">
                         <tr>
-                            <th className="table-header">Description</th>
+                            <th className="table-header text-left">Description</th>
                             <th className="table-header text-right">Tax Payable (IGST)</th>
                             <th className="table-header text-right">Tax Payable (CGST)</th>
                             <th className="table-header text-right">Tax Payable (SGST)</th>
@@ -650,7 +657,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200 font-semibold">
                         <tr>
-                            <td className="table-cell">Total Tax Payable</td>
+                            <td className="table-cell text-left">Total Tax Payable</td>
                             <td className="table-cell font-mono text-right">{Math.max(0, taxPayable.igst).toFixed(2)}</td>
                             <td className="table-cell font-mono text-right">{Math.max(0, taxPayable.cgst).toFixed(2)}</td>
                             <td className="table-cell font-mono text-right">{Math.max(0, taxPayable.sgst).toFixed(2)}</td>
@@ -686,7 +693,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Reports</h2>
-      <style>{`.table-header { padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; } .table-cell { padding: 1rem 1.5rem; white-space: nowrap; font-size: 0.875rem; color: #1f2937; }`}</style>
+      <style>{`.table-header { padding: 0.75rem 1.5rem; font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; } .table-cell { padding: 1rem 1.5rem; white-space: nowrap; font-size: 0.875rem; color: #1f2937; }`}</style>
 
       <div className="mb-6 flex flex-wrap p-1 bg-slate-200 rounded-lg max-w-5xl">
         {(['DayBook', 'LedgerReport', 'TrialBalance', 'StockSummary', 'GSTReports'] as ReportType[]).map(type => (

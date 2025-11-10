@@ -1,10 +1,27 @@
 export type Page = 'Dashboard' | 'Masters' | 'Inventory' | 'Vouchers' | 'Reports' | 'Settings' | 'MassUploadResult';
 
+export interface VoucherNumberingSettings {
+  enabled: boolean;
+  prefix: string;
+  suffix: string;
+  nextNumber: number;
+  padding: number;
+}
+
 export interface CompanyDetails {
   name: string;
   address: string;
   gstin: string;
   state: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  pan?: string;
+  cin?: string;
+  voucherNumbering: {
+    sales: VoucherNumberingSettings;
+    purchase: VoucherNumberingSettings;
+  };
 }
 
 export interface LedgerGroupMaster {
