@@ -72,9 +72,9 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ companyName, vouchers, le
         
         // Sort data chronologically
         const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
-            const [monA, yearA] = a.split(' ');
-            const [monB, yearB] = b.split(' ');
-            return new Date(`1 ${monA} ${yearA}`) > new Date(`1 ${monB} ${yearB}`) ? 1 : -1;
+            const dateA = new Date(`1 ${a.replace(' ', ' 20')}`);
+            const dateB = new Date(`1 ${b.replace(' ', ' 20')}`);
+            return dateA.getTime() - dateB.getTime();
         }).slice(-6); // Last 6 months
 
         const data = sortedMonths.map(month => ({
@@ -84,9 +84,85 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ companyName, vouchers, le
         
         const maxVal = Math.max(...data.map(d => d.sales), ...data.map(d => d.purchases));
 
-        return { data, maxVal: maxVal === 0 ? 1 : maxVal };
+        return { data, maxVal: maxVal === 0 ? 1000 : maxVal };
 
     }, [vouchers]);
+
+    const renderLineChart = () => {
+        const data = chartData.data;
+        const maxVal = chartData.maxVal;
+
+        if (data.length < 2) {
+            return <div className="h-72 flex items-center justify-center text-gray-500">Not enough data to display a chart.</div>;
+        }
+
+        const SVG_WIDTH = 800;
+        const SVG_HEIGHT = 250;
+        const PADDING = { top: 20, right: 20, bottom: 30, left: 60 };
+        const CHART_WIDTH = SVG_WIDTH - PADDING.left - PADDING.right;
+        const CHART_HEIGHT = SVG_HEIGHT - PADDING.top - PADDING.bottom;
+
+        const getCoords = (value: number, index: number) => {
+            const x = PADDING.left + (index / (data.length - 1)) * CHART_WIDTH;
+            const y = PADDING.top + CHART_HEIGHT - (value / maxVal) * CHART_HEIGHT;
+            return { x, y };
+        };
+
+        const salesPath = data.map((d, i) => {
+            const { x, y } = getCoords(d.sales, i);
+            return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
+        }).join(' ');
+        
+        const purchasesPath = data.map((d, i) => {
+            const { x, y } = getCoords(d.purchases, i);
+            return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
+        }).join(' ');
+
+        const yAxisTicks = 5;
+        const yLabels = Array.from({ length: yAxisTicks + 1 }).map((_, i) => {
+            const value = (maxVal / yAxisTicks) * i;
+            const y = PADDING.top + CHART_HEIGHT - (i / yAxisTicks) * CHART_HEIGHT;
+            return { value, y };
+        });
+
+        return (
+            <svg viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`} className="w-full h-72">
+                <g className="text-xs text-gray-400">
+                    {yLabels.map(({ value, y }) => (
+                        <g key={y}>
+                            <text x={0} y={y + 4} textAnchor="start" className="fill-current">
+                                {`₹${(value / 1000).toFixed(0)}k`}
+                            </text>
+                            <line x1={PADDING.left} y1={y} x2={PADDING.left + CHART_WIDTH} y2={y} className="stroke-current opacity-50" strokeDasharray="2,4" />
+                        </g>
+                    ))}
+                </g>
+
+                <g className="text-xs text-gray-500">
+                    {data.map(({ month }, i) => {
+                        const { x } = getCoords(0, i);
+                        return <text key={month} x={x} y={SVG_HEIGHT - PADDING.bottom + 15} textAnchor="middle" className="fill-current">{month}</text>;
+                    })}
+                </g>
+
+                <path d={purchasesPath} fill="none" className="stroke-red-500" strokeWidth="2" />
+                <path d={salesPath} fill="none" className="stroke-blue-500" strokeWidth="2" />
+                
+                <g>
+                    {data.map((d, i) => {
+                        const { x, y } = getCoords(d.purchases, i);
+                        return <circle key={`p-${i}`} cx={x} cy={y} r="4" className="fill-red-500 stroke-white" strokeWidth="2"><title>Purchases: ₹{d.purchases.toFixed(2)}</title></circle>;
+                    })}
+                </g>
+                <g>
+                    {data.map((d, i) => {
+                        const { x, y } = getCoords(d.sales, i);
+                        return <circle key={`s-${i}`} cx={x} cy={y} r="4" className="fill-blue-500 stroke-white" strokeWidth="2"><title>Sales: ₹{d.sales.toFixed(2)}</title></circle>;
+                    })}
+                </g>
+            </svg>
+        );
+    };
     
     const recentVouchers = vouchers.slice(0, 5);
 
@@ -101,23 +177,13 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ companyName, vouchers, le
                 <StatCard title="Payables" value={`₹${(totalPayables / 1000).toFixed(1)}k`} icon={<Icon name="wallet" className="w-6 h-6 text-orange-600" />} color="bg-orange-100" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Monthly Activity</h3>
-                    <div className="h-72 flex items-end justify-around space-x-4">
-                        {chartData.data.map(({month, sales, purchases}) => (
-                           <div key={month} className="flex flex-col items-center flex-1">
-                               <div className="flex items-end h-full w-full justify-center space-x-2">
-                                   <div title={`Sales: ₹${sales.toFixed(2)}`} className="bg-blue-500 w-1/2 rounded-t-md" style={{height: `${(sales / chartData.maxVal) * 90}%`}}></div>
-                                   <div title={`Purchases: ₹${purchases.toFixed(2)}`} className="bg-slate-300 w-1/2 rounded-t-md" style={{height: `${(purchases / chartData.maxVal) * 90}%`}}></div>
-                               </div>
-                               <span className="text-xs text-gray-500 mt-2">{month}</span>
-                           </div>
-                        ))}
-                    </div>
+                    {renderLineChart()}
                      <div className="flex justify-center items-center space-x-4 mt-4 text-sm">
                         <div className="flex items-center space-x-2"><div className="w-3 h-3 bg-blue-500 rounded-sm"></div><span>Sales</span></div>
-                        <div className="flex items-center space-x-2"><div className="w-3 h-3 bg-slate-300 rounded-sm"></div><span>Purchases</span></div>
+                        <div className="flex items-center space-x-2"><div className="w-3 h-3 bg-red-500 rounded-sm"></div><span>Purchases</span></div>
                     </div>
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">

@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo, useCallback } from 'react';
 import type { Ledger, Voucher, StockItem, SalesPurchaseVoucher, LedgerGroupMaster } from '../types';
 
@@ -47,7 +48,13 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
     
     ledgers.forEach(l => ensureLedger(l.name));
     
-    vouchers.forEach(v => {
+    const filteredForDate = vouchers.filter(v => {
+        const isAfterStartDate = startDate ? v.date >= startDate : true;
+        const isBeforeEndDate = endDate ? v.date <= endDate : true;
+        return isAfterStartDate && isBeforeEndDate;
+    });
+
+    filteredForDate.forEach(v => {
       switch (v.type) {
         case 'Purchase':
           ensureLedger(v.party); ensureLedger('Purchases'); ensureLedger('IGST'); ensureLedger('CGST'); ensureLedger('SGST');
@@ -91,7 +98,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
       
     const totals = result.reduce((acc, curr) => ({ debit: acc.debit + curr.debit, credit: acc.credit + curr.credit }), { debit: 0, credit: 0 });
     return { result, totals };
-  }, [reportType, vouchers, ledgers]);
+  }, [reportType, vouchers, ledgers, startDate, endDate]);
   
   const stockSummaryData = useMemo(() => {
     if (reportType !== 'StockSummary') return null;
@@ -105,7 +112,28 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
       };
     });
 
-    vouchers.forEach(v => {
+    const vouchersBeforeStartDate = startDate ? vouchers.filter(v => v.date < startDate) : [];
+    vouchersBeforeStartDate.forEach(v => {
+        if (v.type === 'Purchase' || v.type === 'Sales') {
+            (v as SalesPurchaseVoucher).items.forEach(item => {
+                if (summary[item.name]) {
+                    if (v.type === 'Purchase') {
+                        summary[item.name].opening += item.qty;
+                    } else {
+                        summary[item.name].opening -= item.qty;
+                    }
+                }
+            });
+        }
+    });
+
+    const periodVouchers = vouchers.filter(v => {
+        const isAfterStartDate = startDate ? v.date >= startDate : true;
+        const isBeforeEndDate = endDate ? v.date <= endDate : true;
+        return isAfterStartDate && isBeforeEndDate;
+    });
+
+    periodVouchers.forEach(v => {
         if (v.type === 'Purchase' || v.type === 'Sales') {
             (v as SalesPurchaseVoucher).items.forEach(item => {
                 if (summary[item.name]) {
@@ -126,28 +154,48 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
         outward: data.outward, 
         closing: data.opening + data.inward - data.outward
     }));
-  }, [reportType, vouchers, stockItems]);
+  }, [reportType, vouchers, stockItems, startDate, endDate]);
   
    const gstr1ReportData = useMemo(() => {
     if (reportType !== 'GSTReports') return null;
-    const salesVouchers = vouchers.filter(v => v.type === 'Sales') as SalesPurchaseVoucher[];
+
+    const filteredForDate = vouchers.filter(v => {
+        const isAfterStartDate = startDate ? v.date >= startDate : true;
+        const isBeforeEndDate = endDate ? v.date <= endDate : true;
+        return isAfterStartDate && isBeforeEndDate;
+    });
+
+    const salesVouchers = filteredForDate.filter(v => v.type === 'Sales') as SalesPurchaseVoucher[];
     const b2b = salesVouchers.filter(v => ledgersByName[v.party]?.registrationType === 'Registered' && ledgersByName[v.party]?.gstin);
     const b2c = salesVouchers.filter(v => !ledgersByName[v.party] || ledgersByName[v.party].registrationType !== 'Registered' || !ledgersByName[v.party].gstin);
     return { b2b, b2c };
-  }, [reportType, vouchers, ledgersByName]);
+  }, [reportType, vouchers, ledgersByName, startDate, endDate]);
 
   const gstr2ReportData = useMemo(() => {
     if (reportType !== 'GSTReports') return null;
-    const purchaseVouchers = vouchers.filter(v => v.type === 'Purchase') as SalesPurchaseVoucher[];
+    
+    const filteredForDate = vouchers.filter(v => {
+        const isAfterStartDate = startDate ? v.date >= startDate : true;
+        const isBeforeEndDate = endDate ? v.date <= endDate : true;
+        return isAfterStartDate && isBeforeEndDate;
+    });
+
+    const purchaseVouchers = filteredForDate.filter(v => v.type === 'Purchase') as SalesPurchaseVoucher[];
     const b2bPurchases = purchaseVouchers.filter(v => ledgersByName[v.party]?.registrationType === 'Registered' && ledgersByName[v.party].gstin);
     return { b2bPurchases };
-  }, [reportType, vouchers, ledgersByName]);
+  }, [reportType, vouchers, ledgersByName, startDate, endDate]);
 
   const gstr3bReportData = useMemo(() => {
     if (reportType !== 'GSTReports') return null;
 
-    const salesVouchers = vouchers.filter(v => v.type === 'Sales') as SalesPurchaseVoucher[];
-    const purchaseVouchers = vouchers.filter(v => v.type === 'Purchase') as SalesPurchaseVoucher[];
+    const filteredForDate = vouchers.filter(v => {
+        const isAfterStartDate = startDate ? v.date >= startDate : true;
+        const isBeforeEndDate = endDate ? v.date <= endDate : true;
+        return isAfterStartDate && isBeforeEndDate;
+    });
+
+    const salesVouchers = filteredForDate.filter(v => v.type === 'Sales') as SalesPurchaseVoucher[];
+    const purchaseVouchers = filteredForDate.filter(v => v.type === 'Purchase') as SalesPurchaseVoucher[];
 
     const outwardSupplies = salesVouchers.reduce((acc, v) => {
         acc.taxableValue += v.totalTaxableAmount;
@@ -173,7 +221,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
     };
 
     return { outwardSupplies, inwardSupplies, taxPayable };
-  }, [reportType, vouchers, ledgersByName]);
+  }, [reportType, vouchers, ledgersByName, startDate, endDate]);
 
   const filteredVouchers = useMemo(() => {
     if (reportType === 'DayBook') {
@@ -744,6 +792,21 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
             <button onClick={() => { setSelectedLedger('All Ledgers'); setStartDate(''); setEndDate(''); }} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm">Clear</button>
           </div>
         )}
+        {(reportType === 'TrialBalance' || reportType === 'StockSummary') && (
+            <div className="mb-4 flex items-end space-x-4 p-4 bg-slate-50 rounded-md border border-slate-200">
+                <div>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="startDate" value={startDate} onChange={e => setStartDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                </div>
+                <div>
+                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" id="endDate" value={endDate} onChange={e => setEndDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                </div>
+                {(startDate || endDate) && (
+                    <button onClick={() => { setStartDate(''); setEndDate(''); }} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm">Clear</button>
+                )}
+            </div>
+        )}
         {reportType === 'GSTReports' && (
             <div className="mb-4 flex items-end space-x-4 p-4 bg-slate-50 rounded-md border border-slate-200">
                 <div>
@@ -752,6 +815,17 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ vouchers, ledgers, stockItems
                         {gstrForms.map(form => <option key={form} value={form}>{form}</option>)}
                     </select>
                 </div>
+                 <div>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="startDate" value={startDate} onChange={e => setStartDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                </div>
+                <div>
+                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" id="endDate" value={endDate} onChange={e => setEndDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"/>
+                </div>
+                {(startDate || endDate) && (
+                    <button onClick={() => { setStartDate(''); setEndDate(''); }} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 shadow-sm">Clear</button>
+                )}
             </div>
         )}
         
